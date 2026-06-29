@@ -1,0 +1,72 @@
+{
+  "summary": "Backend 5/5 PASS. Frontend content (carousel chapters, hero audio toggle, focus carousel, end CTA) all working when verified on direct page loads, BUT a CRITICAL navigation crash was discovered: clicking ANY nav link (Our Work / Services / Process / About Us / Contact-hash) from the Home page causes a React 'removeChild' runtime error, blanks the entire root, and the destination page never renders. Direct URL loads of every route still work fine.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "App.js / GallerySection (ScrollTrigger pin) / FullscreenCarousel / RoomJourney",
+        "issue": "Navigating from `/` to any other route via the SPA nav crashes React with NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node. After the click the URL updates but #root becomes empty (rootChildren=0) and an 'Uncaught runtime errors' overlay is shown. Verified from `/` → `/our-work`, `/services`, `/process`, `/about` — all four crash. Navigating between non-home routes (e.g. `/our-work` → `/about`) works fine, so the issue is tied to unmounting the Home page. Most likely cause: GallerySection.jsx uses ScrollTrigger with `pin: true` (line 30) which wraps the pinned node in a `pin-spacer` div outside React's reconciliation tree; on unmount React then fails to removeChild. Other Home GSAP/ScrollTrigger components (FullscreenCarousel, RoomJourney, HeroSlideshow) may compound the issue. Fix: ensure every ScrollTrigger created inside Home subtrees is fully killed on unmount (use a single gsap.context per component AND call ScrollTrigger.getAll().forEach(t=>t.kill()) on Home unmount), or remove `pin: true` / replace with CSS sticky, or call ctx.revert() before route change.",
+        "selector": "[data-testid=nav-link-*] from /",
+        "priority": "CRITICAL"
+      },
+      {
+        "component": "FocusCarousel",
+        "issue": "Centre card max scale observed ~1.13 across a 10s window. Spec says 'scale ~1.18 or higher'. Contrast vs edge cards (0.62) is still very clear, so visually fine, but the centre peak is below the documented target.",
+        "selector": "[data-testid=focus-card-*]",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "SPA navigation from Home",
+        "issue": "All nav links from `/` fail to render destination page due to the removeChild crash above. This makes the in-app nav effectively broken from the landing route — a hard refresh recovers the page.",
+        "affected_selectors": ["[data-testid=nav-link-our-work]", "[data-testid=nav-link-services]", "[data-testid=nav-link-process]", "[data-testid=nav-link-about-us]", "[data-testid=nav-link-contact]"]
+      }
+    ],
+    "design_issues": []
+  },
+  "verified_working": [
+    "GET /api/health -> 200 status:ok",
+    "POST /api/contact persists in MongoDB; GET /api/contact returns the new record with no _id leak; email_delivered returned in response",
+    "Pydantic validation rejects bad email and missing fields (422)",
+    "Home renders h1 'Rihara Interior'",
+    "/our-work renders h1 'A portfolio of quiet rooms.'",
+    "/services renders h1 'Three disciplines. One signature.'",
+    "/process renders h1 'Five chapters, one composed home.'",
+    "/about renders h1 'We listen to rooms before we draw them.' with data-testid=about-us-page (when loaded directly)",
+    "FullscreenCarousel: all 6 chapters render with correct headings (The Arched Welcome, Marble & Fluted Oak, Daylight Drawing Room, The Working Heart, Linen & Light, The Bronze Sanctuary), body text (~160-230 chars each), and 4 material chips each. Anchors #fc-01..#fc-06 are reachable.",
+    "hero-video element present, initial muted=true; hero-audio-toggle click flips muted false → true → false → true (verified via JS click; aria-pressed and label 'Sound On/Off' update accordingly)",
+    "Focus carousel: 22 cards rendered, edge cards scaled ~0.62, centre card peaks ~1.13 — clearly larger than edges",
+    "fc-end-cta link exists with href=/#contact",
+    "Nav has all 5 expected data-testids: nav-link-our-work, nav-link-services, nav-link-process, nav-link-about-us, nav-link-contact"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_rihara_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "HIGH/CRITICAL: Fix the removeChild crash when navigating away from `/`. Most likely culprit is GallerySection.jsx ScrollTrigger pin:true. Suggested fixes (any one): (a) Remove `pin: true` and use CSS position:sticky; (b) Ensure each Home child component wraps its GSAP work in `gsap.context(()=>{...}, ref)` and returns `ctx.revert()` in cleanup (FullscreenCarousel already does this — GallerySection and RoomJourney should be audited similarly); (c) On Home unmount, call `ScrollTrigger.getAll().forEach(t=>t.kill())` and `gsap.killTweensOf('*')`; (d) Re-create lenis after route change.",
+    "LOW: If the design spec requires the centre focus card to reach scale ~1.18, tune the scale mapping in FocusCarousel (current peak ~1.13)."
+  ],
+  "critical_code_review_comments": [
+    "GallerySection.jsx uses ScrollTrigger pin:true, which mutates the DOM (pin-spacer wrapper). Combined with React route transitions, this is the most likely cause of the removeChild crash. Audit cleanup.",
+    "App.js calls ScrollTrigger.refresh() on location change but never kills triggers from the previous route — stale triggers from Home may still reference unmounted nodes.",
+    "FullscreenCarousel correctly uses gsap.context + ctx.revert() in cleanup — good pattern; replicate in GallerySection and RoomJourney.",
+    "server.py looks clean: uses motor async, excludes _id in GET /api/contact, validates with Pydantic, returns proper status codes, env-driven config — no issues."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_rihara_api.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "70% (content & isolated features pass; SPA navigation from Home is broken)"
+  },
+  "seed_data_creation": "Created one TEST_ contact record per test run via POST /api/contact (auto-cleaned per test class is not implemented; records remain in DB with TEST_ prefix for traceability).",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Backend tests at /app/backend/tests/test_rihara_api.py — run with `pytest /app/backend/tests/ -v`. Frontend critical regression to retest after fix: load `/`, then click each nav-link-* and confirm (1) no pageerror in console, (2) destination data-testid (e.g., about-us-page) renders, (3) Home → / re-entry still works. Use `sessionStorage.setItem('rihara-intro-seen','1')` via add_init_script to skip the 3D door intro.",
+  "rca of the issue": "Symptom: After clicking any top-nav link from `/`, the browser URL changes but the page goes blank and an 'Uncaught runtime errors' overlay appears with: NotFoundError: Failed to execute 'removeChild' on 'Node'. Reproduction: (1) goto `/`, (2) wait for hero/carousel to mount, (3) click [data-testid=nav-link-about-us] (or any other nav link), (4) inspect document — `#root` is empty and pageerror is fired. Root cause: One or more components on the Home page use GSAP ScrollTrigger features that mutate the DOM outside of React (most notably GallerySection.jsx with `pin: true` which inserts a pin-spacer wrapper around its trigger). When React tries to unmount the Home subtree during route transition, it encounters a child it no longer owns and throws removeChild. Mitigation: kill all ScrollTriggers + revert all gsap contexts on Home unmount, OR replace pin:true with CSS position:sticky, OR wrap each GSAP block in gsap.context(..., ref) with ctx.revert() returned from the effect cleanup (FullscreenCarousel already does this correctly — use it as the template)."
+}

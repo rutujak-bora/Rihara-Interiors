@@ -10,12 +10,60 @@ gsap.registerPlugin(ScrollTrigger);
 // Pairs with the curated room list to give caption + one-line philosophy.
 
 const SLIDES = [
-  { src: "/interiors/img11.jpeg", room: "Foyer", caption: "Where the home introduces itself.", index: "01" },
-  { src: "/interiors/img5.jpeg",  room: "Living", caption: "Crafted for comfort, designed for living.", index: "02" },
-  { src: "/interiors/img9.jpeg",  room: "Dining", caption: "Slow dinners. Long stories.", index: "03" },
-  { src: "/interiors/img2.jpeg",  room: "Kitchen", caption: "An island for ideas.", index: "04" },
-  { src: "/interiors/img12.jpeg", room: "Retreat", caption: "A room composed in muted light.", index: "05" },
-  { src: "/interiors/img6.jpeg",  room: "Bathroom", caption: "A small room with the discipline of a temple.", index: "06" },
+  {
+    src: "/interiors/img11.jpeg",
+    index: "01",
+    overline: "Chapter One · Foyer",
+    room: "The Arched Welcome",
+    caption: "An oak threshold framed in a hand-cut arch.",
+    body: "The home introduces itself in low, even light. A slim travertine console, a sculpted recess, and a single arched mirror — every line drawn to be quiet on the eye.",
+    materials: ["Limed Oak", "Travertine", "Cove-lit Recess", "Honed Beige Render"],
+  },
+  {
+    src: "/interiors/img5.jpeg",
+    index: "02",
+    overline: "Chapter Two · Living Room",
+    room: "Marble & Fluted Oak",
+    caption: "Book-matched marble holds the room together.",
+    body: "A book-matched marble feature wall sits inside a frame of fluted oak slats. A deep walnut media console floats below; a round black-marble table holds a hand-carved chess set. Built for long evenings and longer conversations.",
+    materials: ["Calacatta Marble", "Fluted Oak Slats", "Black-Marble Table", "Deep Velvet Sofa"],
+  },
+  {
+    src: "/interiors/img9.jpeg",
+    index: "03",
+    overline: "Chapter Three · Drawing Room",
+    room: "Daylight Drawing Room",
+    caption: "Designed for the slow hour between four and six.",
+    body: "Full-height windows pull the daylight in; bouclé sofas catch it. A hand-knotted wool rug grounds the room, a travertine coffee table holds it together. Designed for the unhurried afternoon.",
+    materials: ["Hand-knotted Wool Rug", "Bouclé Linen", "Travertine Coffee Table", "Pleated Drapes"],
+  },
+  {
+    src: "/interiors/img2.jpeg",
+    index: "04",
+    overline: "Chapter Four · Kitchen",
+    room: "The Working Heart",
+    caption: "A marble island for ideas, an open plan for company.",
+    body: "A modular kitchen composed around a long marble island. Smoked-glass cabinetry holds the everyday porcelain on display; a constellation of brass globe pendants lights the breakfast bar. Sapphire-velvet chairs anchor the dining edge.",
+    materials: ["Quartz Island", "Smoked-Glass Display", "Brass Globe Pendants", "Sapphire Velvet"],
+  },
+  {
+    src: "/interiors/img12.jpeg",
+    index: "05",
+    overline: "Chapter Five · Retreat",
+    room: "Linen & Light",
+    caption: "Sheer linen filters the daylight into a single, soft note.",
+    body: "Floor-to-ceiling Belgian linen drapes diffuse the sun. A cream upholstered sofa, a bouclé ottoman, and a low side table in honed walnut — the room is composed for the kind of silence you can sleep into.",
+    materials: ["Belgian Linen Drapes", "Cream Bouclé Ottoman", "Honed Walnut", "Soft Cove Light"],
+  },
+  {
+    src: "/interiors/img6.jpeg",
+    index: "06",
+    overline: "Chapter Six · Bathroom",
+    room: "The Bronze Sanctuary",
+    caption: "A small room with the discipline of a temple.",
+    body: "Textured limewashed walls catch a single shaft of warm light. A bronze counter holds a hand-hammered basin; an arched halo mirror gives back a softened reflection. Engineered for the morning and the evening ritual.",
+    materials: ["Textured Limewash", "Bronze Counter & Basin", "Halo-Lit Arched Mirror", "Honed Stone Floor"],
+  },
 ];
 
 const FullscreenCarousel = () => {
@@ -165,19 +213,31 @@ const FullscreenCarousel = () => {
           </span>
 
           {/* Caption */}
-          <div className="relative z-10 h-full flex items-end pb-20 sm:pb-28 px-6 lg:px-16">
+          <div className="relative z-10 h-full flex items-end pb-16 sm:pb-24 px-6 lg:px-16">
             <div className="fc-text max-w-3xl">
               <div className="flex items-center gap-3 mb-4">
                 <span className="font-body text-[10px] uppercase tracking-[0.42em] text-rihara-gold">{s.index}</span>
                 <span className="h-px w-10 bg-rihara-gold/70" />
-                <span className="font-body text-[10px] uppercase tracking-[0.32em] text-rihara-ivory/70">Chapter · {s.room}</span>
+                <span className="font-body text-[10px] uppercase tracking-[0.32em] text-rihara-ivory/70">{s.overline}</span>
               </div>
-              <h2 className="font-display text-rihara-ivory text-7xl sm:text-8xl lg:text-[10rem] tracking-tight leading-[0.92] font-light">
+              <h2 className="font-display text-rihara-ivory text-5xl sm:text-7xl lg:text-[7rem] tracking-tight leading-[0.95] font-light" data-testid={`fc-heading-${s.index}`}>
                 {s.room}
               </h2>
               <p className="font-display italic text-rihara-gold text-2xl sm:text-3xl lg:text-4xl mt-5 leading-snug max-w-2xl">
                 “{s.caption}”
               </p>
+              <p className="font-body text-rihara-ivory/80 text-base sm:text-lg leading-relaxed mt-6 max-w-2xl" data-testid={`fc-body-${s.index}`}>
+                {s.body}
+              </p>
+              {/* Material tags */}
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-6 max-w-2xl" data-testid={`fc-materials-${s.index}`}>
+                {s.materials.map((m, mi) => (
+                  <span key={mi} className="inline-flex items-center gap-2 font-body text-[10px] uppercase tracking-[0.32em] text-rihara-ivory/85 border border-rihara-gold/40 px-3 py-1.5 bg-rihara-walnut/30 backdrop-blur-sm">
+                    <span className="w-1 h-1 bg-rihara-gold rounded-full" />
+                    {m}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
