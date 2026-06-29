@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, Volume2, VolumeX } from "lucide-react";
 
 // Cinematic Ken-Burns slideshow as the hero background.
 // Two stacked layers cross-fade; each image slowly zooms + pans on its own track.
@@ -22,6 +22,20 @@ const HeroSlideshow = () => {
   const videoRef = useRef(null);
   const overlayRef = useRef(null);
   const [active, setActive] = useState(0);
+  const [muted, setMuted] = useState(true);
+
+  const toggleMute = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    const next = !muted;
+    v.muted = next;
+    setMuted(next);
+    // If unmuting, also re-trigger play() in case it was paused by the policy
+    if (!next) {
+      const p = v.play();
+      if (p && typeof p.catch === "function") p.catch(() => { /* ignore */ });
+    }
+  };
 
   // Robust autoplay (handles browsers that need a play() call after muted is set)
   useEffect(() => {
@@ -132,6 +146,31 @@ const HeroSlideshow = () => {
           />
         ))}
       </div>
+
+      {/* Audio toggle — bottom-right of hero */}
+      <button
+        type="button"
+        onClick={toggleMute}
+        aria-label={muted ? "Unmute hero video" : "Mute hero video"}
+        aria-pressed={!muted}
+        data-testid="hero-audio-toggle"
+        className="group absolute bottom-6 right-6 sm:bottom-8 sm:right-8 z-20 inline-flex items-center gap-2.5 px-4 py-2.5 bg-rihara-walnut/55 hover:bg-rihara-walnut/75 backdrop-blur-md border border-rihara-gold/40 hover:border-rihara-gold text-rihara-ivory transition-all duration-500"
+      >
+        <span className="relative w-4 h-4 inline-flex items-center justify-center">
+          {muted ? (
+            <VolumeX className="w-4 h-4 text-rihara-gold" strokeWidth={1.5} />
+          ) : (
+            <Volume2 className="w-4 h-4 text-rihara-gold" strokeWidth={1.5} />
+          )}
+        </span>
+        <span className="font-body text-[10px] uppercase tracking-[0.32em]">
+          {muted ? "Sound Off" : "Sound On"}
+        </span>
+        {/* subtle pulse ring when muted to draw attention */}
+        {muted && (
+          <span className="pointer-events-none absolute inset-0 border border-rihara-gold/50 animate-ping opacity-40" />
+        )}
+      </button>
     </section>
   );
 };
