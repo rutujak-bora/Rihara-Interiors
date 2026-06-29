@@ -1,0 +1,135 @@
+{
+  "project_name": "Rihara Interior",
+  "theme": "Dark",
+  "archetype": "Archetype 5: Luxury",
+  "design_philosophy": {
+    "vibe": "Luxe, editorial, warm, cinematic",
+    "core_principles": [
+      "Emotion First: Every scroll maps to the feeling of walking through an expertly crafted home.",
+      "Contrast over Saturation: High contrast between Deep Walnut background and Warm Ivory text.",
+      "Negative Space: Utilize generous breathing room to let the actual interior photos be the hero.",
+      "Texture & Lighting: Avoid flat colors. Use subtle gradients, grain, ambient shadows, and cinematic light."
+    ],
+    "anti_patterns": [
+      "BANNED: Inter, Roboto, Open Sans. Use Cormorant Garamond for display and DM Sans for body.",
+      "BANNED: Center-Everything Disease. Use asymmetry for visual tension.",
+      "BANNED: Purple/Teal or glowing gradients. Stick to the earthy/luxe palette."
+    ]
+  },
+  "typography": {
+    "primary": "Cormorant Garamond, serif",
+    "secondary": "DM Sans, sans-serif",
+    "scale": {
+      "h1": "text-5xl sm:text-6xl tracking-tighter leading-none font-light",
+      "h2": "text-4xl sm:text-5xl tracking-tight leading-tight",
+      "h3": "text-2xl sm:text-3xl tracking-tight font-light",
+      "h4": "text-lg sm:text-xl uppercase tracking-[0.2em]",
+      "body": "text-base leading-relaxed",
+      "caption": "text-sm uppercase tracking-[0.1em]"
+    },
+    "typesetting_rules": [
+      "Use Cormorant Garamond for all headings, mixing font-light and italic styles for editorial flair.",
+      "Use DM Sans for body text, labels, and UI elements.",
+      "Overlines, buttons, and small labels must be uppercase with wide tracking.",
+      "Hierarchy Gap Rule: The jump between heading and subheading must not exceed 2 Tailwind steps."
+    ]
+  },
+  "color_palette": {
+    "colors": {
+      "background": "#1A1410",
+      "text": "#F5F0E8",
+      "primary": "#C9A96E",
+      "surface": "#3D2B1F",
+      "surface_secondary": "#E8DDD0"
+    },
+    "css_variables": {
+      "--background": "24 23% 8%",
+      "--foreground": "37 32% 93%",
+      "--primary": "41 46% 61%",
+      "--primary-foreground": "24 23% 8%",
+      "--card": "23 18% 18%",
+      "--card-foreground": "37 32% 93%",
+      "--secondary": "32 28% 86%",
+      "--secondary-foreground": "24 23% 8%",
+      "--border": "23 18% 18%",
+      "--input": "23 18% 18%",
+      "--ring": "41 46% 61%"
+    },
+    "usage_rules": [
+      "No pure black. Background is Deep Walnut.",
+      "Text contrast must be APCA compliant. Primary text is Warm Ivory.",
+      "Antique Gold (#C9A96E) is strictly for accents, active states, and CTA buttons. Use sparingly to maintain luxury feel.",
+      "Do not use full transparent backgrounds behind text. Use gradient overlays (from-background via-background/50 to-transparent) on images."
+    ]
+  },
+  "spacing_and_layout": {
+    "philosophy": "Generous Spacing: Use 2-3x more spacing than typical designs.",
+    "tailwind_scale": ["p-6", "p-12", "p-24", "p-32"],
+    "grid_modes": {
+      "mode_a": "THE TETRIS GRID (For Services and Gallery) - Asymmetry, Visual Tension. Mix 'Hero', 'Tall', and 'Square' spans. Leave empty cells for negative space."
+    },
+    "container_padding": "Containers with borders/cards MUST have internal padding (p-8 or p-12) to prevent text collision."
+  },
+  "surface_strategies": {
+    "glassmorphism": "Optically Clear. bg-background/60 with backdrop-blur-xl and a delicate 1px border-primary/20 for sticky navs.",
+    "solid": "For cards and internal sections, use Flat Solid #3D2B1F with sharp corners or max 4px radius, and subtle drop shadows."
+  },
+  "motion_and_interactions": {
+    "global_animations": "Smooth staggered fades. Slow, deliberate easing to mimic luxury pacing. Hover states must explicitly change text color and elevate.",
+    "door_intro_specs": {
+      "mechanic": "Loading screen features Rihara logo centered. A 3D wooden double door (built via GSAP DOM manipulation or Three.js) animates open from the center. Realistic creak timing, warm light floods in from behind. Tagline fades in: 'Where Spaces Tell Stories'. 'Enter Home' CTA triggers the actual site reveal."
+    },
+    "scroll_journey_specs": {
+      "mechanic": "GSAP ScrollTrigger cinematic flythrough. The container is pinned. As the user scrolls, the background image (room plate) scales up slightly (parallax) while text overlays ('Room Name', 'Philosophy', CTA) fade in and translate Y. Floating 'mood board' cards (small square images/textures) parallax upwards at different speeds."
+    },
+    "tilt_hover_specs": "Service cards grid with 3D tilt hover effect (Framer Motion useTransform/useSpring or pure CSS perspective)."
+  },
+  "pages_and_layouts": {
+    "home": {
+      "intro": "3D door sequence as defined above.",
+      "journey": "Foyer -> Living Room -> Dining Room -> Kitchen -> Master Bedroom -> Bathroom. Sticky nav transitions from transparent to solid Deep Walnut after intro.",
+      "services": "Grid of 3 cards (Full Home Design, Space Planning, Material & Finish Curation) with tilt hover.",
+      "gallery": "Horizontal scroll masonry gallery with subtle parallax on images.",
+      "contact": "Full-width section. 'Ready to Transform Your Space?'. Contact form heavily customized Shadcn (minimalist, bottom borders only). Warm amber Submit button."
+    },
+    "inner_pages": {
+      "our_work": "Masonry grid of all interior photos. High contrast, large imagery.",
+      "services": "Editorial layout, alternating left/right image and text blocks with generous p-32 spacing.",
+      "process": "Vertical scrolling timeline with sticky active state. Use Cormorant Garamond for oversized step numbers."
+    }
+  },
+  "components_and_testing": {
+    "data_testid_conventions": "CRITICAL: All interactive and key informational elements MUST include a 'data-testid' attribute (e.g., 'data-testid=\"enter-home-btn\"'). Kebab-case, role-based.",
+    "shadcn_customizations": "Heavily customize Shadcn components. Strip the 'Vercel-look'. Use raw HTML/Tailwind for marketing layouts. Use Shadcn strictly for Forms, Inputs, Dialogs, Selects."
+  },
+  "media_and_assets": {
+    "image_usage_rules": "ONLY use the local assets in /interiors/. NO placeholder generic images. Images MUST NOT exceed 80vh on mobile devices.",
+    "local_images": {
+      "logo_text": "/interiors/img1.jpeg",
+      "logo_circular": "/interiors/img7.jpeg",
+      "journey": [
+        {"room": "Foyer", "url": "/interiors/img8.jpeg"},
+        {"room": "Living Room", "url": "/interiors/img6.jpeg"},
+        {"room": "Dining Room", "url": "/interiors/img10.jpeg"},
+        {"room": "Kitchen", "url": "/interiors/img2.jpeg"},
+        {"room": "Master Bedroom", "url": "/interiors/img13.jpeg"},
+        {"room": "Bathroom", "url": "/interiors/img4.jpeg"}
+      ],
+      "gallery_and_mood_boards": [
+        "/interiors/img3.jpeg",
+        "/interiors/img5.jpeg",
+        "/interiors/img9.jpeg",
+        "/interiors/img11.jpeg",
+        "/interiors/img12.jpeg",
+        "/interiors/img14.jpeg"
+      ]
+    }
+  },
+  "instructions_to_main_agent": [
+    "You are working with React (.jsx/.js files), Tailwind CSS, GSAP, and Shadcn UI.",
+    "Implement the 3D Door Intro carefully: It is the emotional hook.",
+    "For the scroll-driven room flythrough, use GSAP ScrollTrigger to pin the sections and transition the images sequentially.",
+    "Use pure HTML+Tailwind for complex overlapping elements. Shadcn is for functional logic only.",
+    "Always add data-testid attributes to all interactive elements to support automated testing."
+  ]
+}
