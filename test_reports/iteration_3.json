@@ -1,0 +1,40 @@
+{
+  "summary": "BUG RETEST PASSED: The 'chapter text invisible' issue is fully resolved. All 6 FullscreenCarousel sections (fc-01..fc-06) now render .fc-text with computed opacity === 1, the correct heading, the italic quote, the body paragraph, and exactly 4 material chips. SPA navigation regression intact (4 nav links + reverse logo nav, 0 pageerrors). Backend health + contact POST spot-check pass.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "verified_fixes": [
+    "fc-01 'The Arched Welcome' — opacity=1, heading visible, body visible, 4 material chips",
+    "fc-02 'Marble & Fluted Oak' — opacity=1, heading visible, body visible, 4 material chips",
+    "fc-03 'Daylight Drawing Room' — opacity=1, heading visible, body visible, 4 material chips (screenshot captured)",
+    "fc-04 'The Working Heart' — opacity=1, heading visible, body visible, 4 material chips",
+    "fc-05 'Linen & Light' — opacity=1, heading visible, body visible, 4 material chips",
+    "fc-06 'The Bronze Sanctuary' — opacity=1, heading visible, body visible, 4 material chips",
+    "All .fc-text transforms show matrix(1,0,0,1,0,30) — only y-translation, no opacity tween, as intended",
+    "Nav regression: nav-link-our-work, nav-link-services, nav-link-process, nav-link-about-us — each navigates cleanly, destination data-testid visible, #root populated, 0 pageerrors",
+    "Reverse nav /about -> / re-mounts Home cleanly; fc-01 opacity=1, heading 'The Arched Welcome' visible, 0 pageerrors",
+    "Backend GET /api/health -> 200 {status:ok}",
+    "Backend POST /api/contact -> 200 {ok:true, id:..., email_delivered:true}"
+  ],
+  "test_methodology": "Used add_init_script to seed sessionStorage 'rihara-intro-seen'='1', then for each chapter scrollIntoView({block:'start'}) and evaluated getComputedStyle on .fc-text inside the section. Asserted opacity===1, visibility===visible, heading text matches expected, body text non-empty and visible, and exactly 4 chips. Verified computed transform is matrix(1,0,0,1,0,30) i.e. only y-translation (no scale/opacity touch). For nav regression, captured pageerror events, navigated from / -> each section, asserted destination testid + #root.children>0 + zero pageerrors. Backend verified via curl.",
+  "test_report_links": [
+    "/app/backend/tests/test_rihara_api.py (from iteration_1; backend unchanged, spot-checked via curl)"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "FullscreenCarousel.jsx fix is clean and minimal — keeping only a y-parallax tween on .fc-text avoids touching opacity entirely, so the element is guaranteed visible regardless of ScrollTrigger lifecycle quirks.",
+    "App.js RouteHandler isFirstRouteRender ref correctly skips ScrollTrigger.killAll() on initial mount, preventing newly-registered triggers (from FullscreenCarousel/GallerySection/RoomJourney) from being killed before their fromTo() initial-state writes settle.",
+    "fc-index uses {opacity:0} -> {opacity:0.18} fromTo, which is intentional (it's the decorative giant numeral that fades in on scroll). This is safe because fc-index is not the main content."
+  ],
+  "updated_files": ["/app/test_reports/iteration_3.json"],
+  "success_rate": { "backend": "100%", "frontend": "100%" },
+  "test_credentials": "None required for this flow",
+  "seed_data_creation": "POST /api/contact created one TEST_iter3 record (id:1fcfe3bb-31f2-48f2-a958-2dbb0fd99f91) as a spot-check.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "All three reported regressions (removeChild crash, FocusCarousel peak scale, invisible chapter text) are resolved across iterations 1->2->3. If future regressions appear, look first at the GSAP fromTo({opacity:0}) pattern combined with ScrollTrigger — that combination has now been fully removed from .fc-text. The intro gate sessionStorage key is 'rihara-intro-seen'='1'.",
+  "rca of the issue": "Root cause: GSAP fromTo(text, {opacity:0}, {opacity:1, scrollTrigger:{...}}) writes opacity:0 inline immediately on tween creation, then relies on ScrollTrigger to drive it to 1. When ScrollTrigger.killAll() was being invoked on first mount (by RouteHandler), the inline opacity:0 style was left orphaned with no driver to clear it, so .fc-text stayed at opacity:0 forever. Fix: removed the opacity fromTo on .fc-text entirely — only a y-parallax tween remains, so opacity stays at the CSS default of 1. Additionally App.js gates the killAll() call with isFirstRouteRender ref to be defensive. Verified: all 6 .fc-text elements computed opacity = 1 and transform = matrix(1,0,0,1,0,30)."
+}

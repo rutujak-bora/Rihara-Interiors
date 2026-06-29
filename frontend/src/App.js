@@ -54,10 +54,16 @@ const RouteHandler = () => {
     return () => clearInterval(i);
   }, []);
 
+  const isFirstRouteRender = useRef(true);
   useEffect(() => {
-    // Kill any stale ScrollTriggers from the previous route's components
-    // so React can safely unmount nodes that GSAP may have wrapped (pin-spacer, etc.)
-    try { ScrollTrigger.getAll().forEach((t) => t.kill()); } catch { /* no-op */ }
+    // Skip on the very first render — components are still establishing their
+    // ScrollTriggers and killing them here would leave fromTo() styles stuck.
+    // Only kill on actual route TRANSITIONS so React can safely unmount
+    // nodes that GSAP may have wrapped (pin-spacer, etc.).
+    if (!isFirstRouteRender.current) {
+      try { ScrollTrigger.getAll().forEach((t) => t.kill()); } catch { /* no-op */ }
+    }
+    isFirstRouteRender.current = false;
 
     if (location.pathname === "/" && location.hash) {
       const id = location.hash.replace("#", "");

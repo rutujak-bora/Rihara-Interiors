@@ -112,34 +112,19 @@ const FullscreenCarousel = () => {
           );
         }
 
-        // Parallax fade for text
+        // Subtle parallax drift only — never touch opacity, so text is always visible
         if (text) {
           gsap.fromTo(
             text,
-            { opacity: 0, y: 60 },
+            { y: 30 },
             {
-              opacity: 1,
-              y: 0,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: section,
-                start: "top 75%",
-                end: "top 35%",
-                scrub: 1.2,
-              },
-            }
-          );
-          gsap.fromTo(
-            text,
-            { y: 0 },
-            {
-              y: -80,
+              y: -60,
               ease: "none",
               scrollTrigger: {
                 trigger: section,
-                start: "top top",
+                start: "top bottom",
                 end: "bottom top",
-                scrub: 1,
+                scrub: 1.2,
               },
             }
           );
