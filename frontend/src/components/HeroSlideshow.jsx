@@ -12,7 +12,7 @@ const SLIDES = [
   { src: "/interiors/img6.jpeg", anchor: "center", from: { scale: 1.05, x: 0, y: 0 }, to: { scale: 1.2, x: 3, y: 2 } },
   { src: "/interiors/img9.jpeg", anchor: "center", from: { scale: 1.0, x: 0, y: 2 }, to: { scale: 1.18, x: -2, y: -3 } },
   { src: "/interiors/img12.jpeg", anchor: "center", from: { scale: 1.04, x: 1, y: 0 }, to: { scale: 1.2, x: -3, y: 2 } },
-  { src: "/interiors/img1.jpeg", anchor: "center", from: { scale: 1.0, x: -1, y: 0 }, to: { scale: 1.18, x: 3, y: -2 } },
+  { src: "/interiors/img3.jpeg", anchor: "center", from: { scale: 1.0, x: -1, y: 0 }, to: { scale: 1.18, x: 3, y: -2 } },
 ];
 
 const SLIDE_DURATION = 6500; // ms per slide

@@ -37,7 +37,7 @@ export const ROOMS = [
     description:
       "Veined marble, fluted wood, a deep upholstered sofa — a room that holds conversation gently and lets it settle into the cushions.",
     image: "/interiors/img5.jpeg",
-    accentImage: "/interiors/img1.jpeg",
+    accentImage: "/interiors/img3.jpeg",
   },
   {
     id: "dining",
@@ -94,7 +94,6 @@ export const GALLERY = [
   { url: "/interiors/img2.jpeg", project: "Open Sky Kitchen", city: "Chennai" },
   { url: "/interiors/img11.jpeg", project: "Threshold", city: "Mumbai" },
   { url: "/interiors/img6.jpeg", project: "Bronze Bath", city: "Kolkata" },
-  { url: "/interiors/img1.jpeg", project: "Coral Heights", city: "Mumbai" },
   { url: "/interiors/img9.jpeg", project: "Linden House", city: "Bengaluru" },
   { url: "/interiors/img10.jpeg", project: "Anandam Sanctuary", city: "Ahmedabad" },
   { url: "/interiors/img12.jpeg", project: "House of Light", city: "Goa" },
