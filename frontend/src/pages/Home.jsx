@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import DoorIntro from "../components/DoorIntro3D";
 import HeroSlideshow from "../components/HeroSlideshow";
+import FocusCarousel from "../components/FocusCarousel";
 import FullscreenCarousel from "../components/FullscreenCarousel";
 import ServicesGrid from "../components/ServicesGrid";
 import GallerySection from "../components/GallerySection";
@@ -99,6 +100,7 @@ const Home = () => {
     <>
       {intro && <DoorIntro onEnter={handleEnter} />}
       <HeroSlideshow />
+      <FocusCarousel />
       <FullscreenCarousel />
       <Manifesto />
       <Marquee />
