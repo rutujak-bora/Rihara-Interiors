@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import OurWork from "./pages/OurWork";
 import ServicesPage from "./pages/ServicesPage";
 import Process from "./pages/Process";
+import AboutUs from "./pages/AboutUs";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -74,6 +75,7 @@ const RouteHandler = () => {
         <Route path="/our-work" element={<OurWork />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/process" element={<Process />} />
+        <Route path="/about" element={<AboutUs />} />
         <Route path="*" element={<OurWork />} />
       </Routes>
       <Footer />
