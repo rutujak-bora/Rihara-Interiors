@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import DoorIntro from "../components/DoorIntro3D";
 import HeroSlideshow from "../components/HeroSlideshow";
 import FocusCarousel from "../components/FocusCarousel";
@@ -90,6 +91,16 @@ const Home = () => {
     }
     return () => { document.body.style.overflow = ""; };
   }, [intro]);
+
+  // Kill all ScrollTriggers on Home unmount to prevent React removeChild errors
+  // (some ScrollTrigger features like pin: true mutate DOM outside React's tree)
+  useEffect(() => {
+    return () => {
+      try {
+        ScrollTrigger.getAll().forEach((t) => t.kill());
+      } catch { /* no-op */ }
+    };
+  }, []);
 
   const handleEnter = () => {
     try { sessionStorage.setItem("rihara-intro-seen", "1"); } catch { /* ignore */ }

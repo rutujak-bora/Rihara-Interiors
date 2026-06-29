@@ -1,0 +1,38 @@
+{
+  "summary": "Retest of the CRITICAL SPA navigation crash (iteration_1) after multi-layered fix. ALL nav links from `/` now navigate cleanly with zero pageerrors; #root stays populated; destination data-testid renders. Reverse navigation works. FocusCarousel centre peak now exceeds the 1.18 target. All 6 FullscreenCarousel chapter headings present. The CRITICAL bug is RESOLVED and the LOW priority FocusCarousel scale is also resolved.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "verified_fixes": [
+    "nav-link-our-work from / -> /our-work : our-work-page visible, root children=1, 0 pageerrors",
+    "nav-link-services from / -> /services : services-page visible, root children=1, 0 pageerrors",
+    "nav-link-process from / -> /process : process-page visible, root children=1, 0 pageerrors",
+    "nav-link-about-us from / -> /about : about-us-page visible, root children=1, 0 pageerrors",
+    "nav-link-contact from / -> /#contact : contact-section visible, root children=1, 0 pageerrors",
+    "Reverse /about -> / via rihara logo : home re-mounts, hero/section visible, 0 pageerrors",
+    "Cross-route /our-work -> /about : about-us-page visible, 0 pageerrors",
+    "Cross-route /about -> /#contact : contact-section visible, 0 pageerrors",
+    "FocusCarousel centre peak scale: 1.207 over ~11s sample (target >= 1.18) — PASS",
+    "FullscreenCarousel: all 6 chapter headings present (The Arched Welcome, Marble & Fluted Oak, Daylight Drawing Room, The Working Heart, Linen & Light, The Bronze Sanctuary)"
+  ],
+  "test_methodology": "Used add_init_script to seed sessionStorage 'rihara-intro-seen'='1' before each goto so the 3D door intro is skipped. Listened to pageerror events. For every nav target: goto /, wait 1.8s, click nav link, wait 2s, then assert (a) dest data-testid visible, (b) #root.children.length > 0, (c) no pageerrors. FocusCarousel scale sampled every 500ms x 22 (~11s) reading computed transform matrix[0] across all focus cards.",
+  "test_report_links": [
+    "/app/backend/tests/test_rihara_api.py (from iteration_1; backend unchanged)",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Fix is correctly layered: GallerySection now uses pinType:'transform' (avoids pin-spacer DOM mutation that was conflicting with React reconciliation); Home.jsx kills all ScrollTriggers on unmount; App.js RouteHandler kills triggers on every route change before refresh. This belt-and-braces approach is appropriate for GSAP/React integration and should be kept.",
+    "Minor (not blocking): ScrollTrigger.getAll().forEach(t=>t.kill()) in RouteHandler runs before the new route mounts AND on first render; consider gating it with a useRef to skip the initial mount for marginal perf, but current behavior is safe."
+  ],
+  "updated_files": ["/app/test_reports/iteration_2.json"],
+  "success_rate": { "backend": "100% (unchanged from iteration_1)", "frontend": "100% on retested flows" },
+  "seed_data_creation": "None this iteration (frontend-only retest).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "CRITICAL navigation crash from iteration_1 is fully resolved. Backend tests live at /app/backend/tests/test_rihara_api.py. If further regression needed, focus on contact form e2e (POST /api/contact integration) and mobile viewport nav.",
+  "rca of the issue": "Resolved. Root cause was GSAP ScrollTrigger pin:true creating a pin-spacer DOM wrapper outside React's reconciliation tree on GallerySection; on Home unmount React failed removeChild. Mitigation applied: (1) pinType:'transform' avoids pin-spacer insertion; (2) Home unmount + RouteHandler both kill all ScrollTriggers defensively. Verified via 5 nav links + reverse + cross-route, zero pageerrors observed."
+}

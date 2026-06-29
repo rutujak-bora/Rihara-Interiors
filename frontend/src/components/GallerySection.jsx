@@ -28,6 +28,7 @@ const GallerySection = () => {
           end: () => `+=${recompute()}`,
           scrub: 1,
           pin: true,
+          pinType: "transform",
           anticipatePin: 1,
           invalidateOnRefresh: true,
         },

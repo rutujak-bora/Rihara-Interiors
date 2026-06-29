@@ -55,6 +55,10 @@ const RouteHandler = () => {
   }, []);
 
   useEffect(() => {
+    // Kill any stale ScrollTriggers from the previous route's components
+    // so React can safely unmount nodes that GSAP may have wrapped (pin-spacer, etc.)
+    try { ScrollTrigger.getAll().forEach((t) => t.kill()); } catch { /* no-op */ }
+
     if (location.pathname === "/" && location.hash) {
       const id = location.hash.replace("#", "");
       setTimeout(() => {

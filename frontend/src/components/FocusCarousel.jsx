@@ -39,10 +39,10 @@ const FocusCarousel = () => {
         const r = card.getBoundingClientRect();
         const cardCenter = r.left + r.width / 2;
         const distance = Math.abs(cardCenter - center);
-        const maxDist = window.innerWidth * 0.45;
+        const maxDist = window.innerWidth * 0.42;
         const t = Math.min(1, distance / maxDist); // 0 at center, 1 far
-        // Scale: 1.18 at center → 0.62 at edges  (clear hierarchy)
-        const scale = 1.18 - t * 0.56;
+        // Scale: 1.22 at center → 0.62 at edges  (clear hierarchy)
+        const scale = 1.22 - t * 0.6;
         // Opacity: 1 at center → 0.35 at edges
         const opacity = 1 - t * 0.65;
         // Centre piece floats up a bit
