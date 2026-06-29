@@ -3,7 +3,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowDown } from "lucide-react";
-import DoorIntro from "../components/DoorIntro";
+import DoorIntro from "../components/DoorIntro3D";
+import HeroPendant3D from "../components/HeroPendant3D";
 import RoomJourney from "../components/RoomJourney";
 import ServicesGrid from "../components/ServicesGrid";
 import GallerySection from "../components/GallerySection";
@@ -79,8 +80,13 @@ const Hero = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-rihara-ivory/40 via-transparent to-transparent lg:from-rihara-ivory/30" />
           <div className="absolute inset-0 grain pointer-events-none" />
 
+          {/* 3D Brass Pendant Lamp — signature object */}
+          <div className="absolute top-0 right-0 w-[44%] h-[60%] pointer-events-none z-10" data-testid="hero-3d-pendant">
+            <HeroPendant3D />
+          </div>
+
           {/* Floating mood thumbnail */}
-          <div className="hidden lg:block absolute bottom-12 left-[-60px] w-52 h-72 overflow-hidden bg-rihara-cream shadow-2xl ring-1 ring-rihara-walnut/15">
+          <div className="hidden lg:block absolute bottom-12 left-[-60px] w-52 h-72 overflow-hidden bg-rihara-cream shadow-2xl ring-1 ring-rihara-walnut/15 z-20">
             <img src="/interiors/img2.jpeg" alt="" className="w-full h-full object-cover" />
             <div className="absolute bottom-0 left-0 right-0 p-3 bg-rihara-ivory/95 backdrop-blur">
               <p className="font-body text-[9px] uppercase tracking-[0.32em] text-rihara-gold-deep">Kitchen · 04</p>
@@ -89,8 +95,14 @@ const Hero = () => {
           </div>
 
           {/* Caption tag */}
-          <div className="absolute top-6 right-6 bg-rihara-ivory/90 backdrop-blur px-3 py-1.5">
+          <div className="absolute top-6 right-6 bg-rihara-ivory/90 backdrop-blur px-3 py-1.5 z-20">
             <p className="font-body text-[10px] uppercase tracking-[0.32em] text-rihara-walnut">The Mehta Residence · Pune</p>
+          </div>
+
+          {/* 3D label badge */}
+          <div className="absolute bottom-6 right-6 bg-rihara-walnut/85 backdrop-blur px-3 py-1.5 z-20 flex items-center gap-2">
+            <span className="block w-1.5 h-1.5 rounded-full bg-rihara-gold animate-pulse" />
+            <p className="font-body text-[10px] uppercase tracking-[0.32em] text-rihara-gold">3D · Live</p>
           </div>
         </div>
       </div>
